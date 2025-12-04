@@ -1,0 +1,61 @@
+{
+    getProductListing(defaultLanguage: "en", first: 100, after: 0) {
+        totalCount
+        edges {
+            node {
+                sku
+                description
+                brand
+                category {
+                    ... on object_Category {
+                        name
+                        parent {
+                            ... on object_Category {
+                                name
+                            }
+                        }
+                        children {
+                            ... on object_Category {
+                                name
+                            }
+                        }
+                    }
+                }
+                depth
+                ean
+                dimensions
+                height
+                grossWeight
+                extraImages {
+                    image {
+                        creationDate
+                        filename
+                        fullpath
+                        mimetype
+                        modificationDate
+                    }
+                }
+                length
+                longDescription
+                netWeight
+                title
+                ukPrice
+                ukStock
+                width
+                children {
+                    ... on object_Product {
+                        sku
+                    }
+                }
+                defaultImage {
+                    creationDate
+                    filename
+                    fullpath
+                    mimetype
+                    modificationDate
+                }
+                creationDate
+            }
+        }
+    }
+}
