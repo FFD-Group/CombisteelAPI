@@ -186,6 +186,46 @@ class DatabaseFacade:
     def associate_brand(self, product: Product, brand: Brand) -> None:
         pass
 
+    # EXAMPLE CATEGORY OBJ
+    # {
+    #     "name": "Voorraadkasten",
+    #     "parent": {
+    #         "name": "Wand- en voorraadkasten"
+    #     },
+    #     "children": []
+    # }
+    def find_category(self, category: dict) -> Category | None:
+        pass
+
+    def add_category(self, category: dict) -> Category:
+        pass
+
+    def associate_category(self, product: Product, category: Category) -> None:
+        pass
+
+    # EXAMPLE IMAGE OBJ
+    # [
+    #     {
+    #         "image": {
+    #             "creationDate": 1753856708,
+    #             "filename": "7003.0700-0701-0702-0703a_3.jpg",
+    #             "fullpath": "/Product%20Assets/7003.0700-0701-0702-0703a_3.jpg",
+    #             "mimetype": "image/jpeg",
+    #             "modificationDate": 1753856708
+    #         }
+    #     }
+    # ]
+    def find_image(self, image: dict) -> Image | None:
+        pass
+
+    def add_image(self, image: dict) -> Image:
+        pass
+
+    def associate_image(
+        self, product: Product, image: Image, is_default=False
+    ) -> None:
+        pass
+
 
 if __name__ == "__main__":
     qm = ApiQueryManager()
@@ -224,6 +264,27 @@ if __name__ == "__main__":
                     existing_brand = df.add_brand(product_brand)
                 df.associate_brand(added_p, existing_brand)
             # Category association/creation
+            product_categories = product["category"]
+            if len(product_categories) > 0:
+                for product_category in product_categories:
+                    existing_category = df.find_category(product_category)
+                    if not existing_category:
+                        existing_category = df.add_category(product_category)
+                    df.associate_category(added_p, existing_category)
+            # Image creation/association
+            product_extra_images = product["extraImages"]
+            product_default_image = product["defaultImage"]
+            if len(product_extra_images) > 0:
+                for product_image in product_extra_images:
+                    existing_image = df.find_image(product_image)
+                    if not existing_image:
+                        existing_image = df.add_image(product_image)
+                    df.associate_image(added_p, existing_image)
+            if product_default_image:
+                existing_image = df.find_image(product_default_image)
+                if not existing_image:
+                    existing_image = df.add_image(product_default_image)
+                df.associate_image(added_p, existing_image, True)
 
         total_count += 1
     print(
