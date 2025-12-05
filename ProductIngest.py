@@ -169,7 +169,7 @@ class DatabaseFacade:
 
     def find_product(self, sku: str) -> Product | None:
         """Find a Product in the database with the given sku."""
-        stmt = select(Product).where(Product.sku.in_([sku]))
+        stmt = select(Product).where(Product.sku.in_([sku.strip()]))
         with self._Session() as session:
             return session.scalar(stmt)
 
@@ -182,13 +182,13 @@ class DatabaseFacade:
 
     def find_brand(self, brand: str) -> Brand | None:
         """Find a Brand in the database with the given name."""
-        stmt = select(Brand).where(Brand.name.in_([brand]))
+        stmt = select(Brand).where(Brand.name.in_([brand.strip()]))
         with self._Session() as session:
             return session.scalar(stmt)
 
     def add_brand(self, brand: str) -> Brand:
         """Add a Brand to the database with the given name."""
-        brand_entity = Brand(name=brand)
+        brand_entity = Brand(name=brand.strip())
         with self._Session() as session:
             session.add(brand_entity)
             session.commit()
@@ -203,14 +203,14 @@ class DatabaseFacade:
 
     def find_category(self, category: dict) -> Category | None:
         """Find a Category in the database with the given name."""
-        category_name = category["name"]
+        category_name = category["name"].strip()
         stmt = select(Category).where(Category.name.is_(category_name))
         with self._Session() as session:
             return session.scalar(stmt)
 
     def add_category(self, category: dict) -> Category:
         """Add a Category to the database using the given entity."""
-        category_name = category["name"]
+        category_name = category["name"].strip()
         category_entity = Category(name=category_name)
         if category["parent"]:
             parent_category_name = category["parent"]["name"]
@@ -235,7 +235,7 @@ class DatabaseFacade:
             fullpath = image["image"]["fullpath"]
         else:
             fullpath = image["fullpath"]
-        stmt = select(Image).where(Image.fullpath.in_([fullpath]))
+        stmt = select(Image).where(Image.fullpath.in_([fullpath.strip()]))
         with self._Session() as session:
             return session.scalar(stmt)
 
@@ -246,7 +246,7 @@ class DatabaseFacade:
         image_entity = Image(
             creation_date=image["creationDate"],
             filename=image["filename"],
-            fullpath=image["fullpath"],
+            fullpath=image["fullpath"].strip(),
             mimetype=image["mimetype"],
             modification_date=image["modificationDate"],
         )
