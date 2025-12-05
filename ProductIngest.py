@@ -171,10 +171,20 @@ class DatabaseFacade:
         with self._session as session:
             return session.scalar(stmt)
 
-    def add_product(self, product: Product) -> None:
+    def add_product(self, product: Product) -> Product:
         with self._session as session:
             session.add(product)
             session.commit()
+            return Product
+
+    def find_brand(self, brand: str) -> Brand | None:
+        pass
+
+    def add_brand(self, brand: str) -> Brand:
+        pass
+
+    def associate_brand(self, product: Product, brand: Brand) -> None:
+        pass
 
 
 if __name__ == "__main__":
@@ -183,8 +193,10 @@ if __name__ == "__main__":
     create_tables(engine)
     total_count = 1
     added_count = 0
+    categories = {}
     for product in qm.get_products():
         if not df.find_product(product["sku"]):
+            # Product creation
             p = Product(
                 uk_price=product["ukPrice"],
                 uk_stock=product["ukStock"],
@@ -202,8 +214,17 @@ if __name__ == "__main__":
                 net_weight=product["netWeight"],
                 title=product["title"],
             )
-            df.add_product(p)
+            added_p = df.add_product(p)
             added_count += 1
+            # Brand assocation/creation
+            product_brand = product["brand"]
+            if product_brand:
+                existing_brand = df.find_brand(product_brand)
+                if not existing_brand:
+                    existing_brand = df.add_brand(product_brand)
+                df.associate_brand(added_p, existing_brand)
+            # Category association/creation
+
         total_count += 1
     print(
         total_count,
