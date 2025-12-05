@@ -76,7 +76,7 @@ class Image(Base):
     image_id: Mapped[int] = mapped_column(primary_key=True)
     creation_date: Mapped[int] = mapped_column(nullable=True)
     filename: Mapped[str] = mapped_column(nullable=False)
-    fullpath: Mapped[str] = mapped_column(nullable=False)
+    fullpath: Mapped[str] = mapped_column(nullable=False, unique=True)
     mimetype: Mapped[str] = mapped_column(nullable=True)
     modification_date: Mapped[int] = mapped_column(nullable=True)
 
