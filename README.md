@@ -7,6 +7,11 @@ Creates a database, fetches all products from the Combisteel API (incl. Ecofrost
 ## `Planning` Database schema design
 The Excel document describes the schema for the database to hold the product & associated entities.
 
+> [!WARNING]
+> The database schema has had slight changes as the app has developed.
+
 ## `Playground` Initial testing & exploration
 Files within the `Playground` folder describe exploration of the API and testing database workings.
 
+> [!WARNING]
+> The database schema has had slight changes as the app has developed.
