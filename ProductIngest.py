@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from Engine import engine
+from sqlalchemy import select
+from Engine import engine, create_tables
 from Models import (
     Product,
     Brand,
@@ -20,7 +21,7 @@ import time
 load_dotenv()
 
 
-class QueryManager:
+class ApiQueryManager:
     """Manage a set of queries to the API"""
 
     def __init__(self):
@@ -157,10 +158,57 @@ class QueryManager:
                 self._query_page()
 
 
+class DatabaseFacade:
+    """Interact with the database entities."""
+
+    def __init__(self, engine):
+        """Set up instance properties."""
+        self._engine = engine
+        self._session = Session(self._engine)
+
+    def find_product(self, sku: str) -> Product | None:
+        stmt = select(Product).where(Product.sku.in_([sku]))
+        with self._session as session:
+            return session.scalar(stmt)
+
+    def add_product(self, product: Product) -> None:
+        with self._session as session:
+            session.add(product)
+            session.commit()
+
+
 if __name__ == "__main__":
-    qm = QueryManager()
-    count = 1
+    qm = ApiQueryManager()
+    df = DatabaseFacade(engine)
+    create_tables(engine)
+    total_count = 1
+    added_count = 0
     for product in qm.get_products():
-        print(product)
-        count += 1
-    print(count, "products fetched from API.")
+        if not df.find_product(product["sku"]):
+            p = Product(
+                uk_price=product["ukPrice"],
+                uk_stock=product["ukStock"],
+                width=product["width"],
+                creation_date=product["creationDate"],
+                depth=product["depth"],
+                description=product["description"],
+                dimensions=product["dimensions"],
+                ean=product["ean"],
+                sku=product["sku"],
+                gross_weight=product["grossWeight"],
+                height=product["height"],
+                length=product["length"],
+                long_description=product["longDescription"],
+                net_weight=product["netWeight"],
+                title=product["title"],
+            )
+            df.add_product(p)
+            added_count += 1
+        total_count += 1
+    print(
+        total_count,
+        "products fetched from API.",
+        added_count,
+        "added to database.",
+    )
+    print(df.find_product("7950.5345"))
