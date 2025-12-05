@@ -25,9 +25,9 @@ class Product(Base):
     description: Mapped[str]
     dimensions: Mapped[str] = mapped_column(nullable=True)
     ean: Mapped[str] = mapped_column(nullable=True)
-    sku: Mapped[str]
+    sku: Mapped[str] = mapped_column(unique=True)
     gross_weight: Mapped[float] = mapped_column(nullable=True)
-    height: Mapped[int]
+    height: Mapped[int] = mapped_column(nullable=True)
     length: Mapped[int] = mapped_column(nullable=True)
     long_description: Mapped[str] = mapped_column(nullable=True)
     net_weight: Mapped[float] = mapped_column(nullable=True)
